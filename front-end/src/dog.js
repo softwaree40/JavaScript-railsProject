@@ -1,9 +1,9 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     renderDogToPage()
-    addEventBinder()
+
 })
-// addEventBinder()
+addEventBinder()
 function addEventBinder() {
     let formDiv = document.getElementById("dog-form")
     formDiv.innerHTML = ""
@@ -38,8 +38,8 @@ function renderForm() {
      </fieldset>
    </form>`
     forms.innerHTML = html
-    document.querySelector("form").addEventListener("submit",createDogs)
-    
+    forms.addEventListener("submit", createDogs)
+
 }
 
 function ClearPage() {
@@ -51,8 +51,8 @@ function ClearPage() {
 
 function createDogs(event) {
     console.log("what good")
-    
-    
+
+
     let name = document.getElementById("name").value
     let age = document.getElementById("age").value
     let sex = document.getElementById("sex").value
@@ -80,10 +80,10 @@ function createDogs(event) {
             "Content-Type": "application/json", "Accept": "application/json"
         }
     }).then(response => response.json())
-      .then(dogs => renderDogToPage(dogs))
+        .then(dogs => renderDogToPage(dogs))
     // renderDogToPage()
     renderDogToPage()
-    // clearList()
+    clearList()
     event.preventDefault()
 }
 
@@ -104,7 +104,7 @@ function renderDogToPage() {
         .then(resp => resp.json())
         .then(dogs => {
 
-            dogList.innerHTML = dogs.map(dog =>`<div class="card" data-dog-id="${dog.id}">
+            dogList.innerHTML = dogs.map(dog => `<div class="card" data-dog-id="${dog.id}">
       <button class="view-events-dog-button" style="background-color:blue">View Record</button>  
       <button class="edit-dog-button" style="background-color:orange">Edit Info</button>  
       <button class="delete-dog-button" style="background-color:red">Delete Dog</button>
@@ -112,7 +112,7 @@ function renderDogToPage() {
       <strong class="dog-name">${dog.name}</strong> <br/>
         <strong>Age: </strong>${dog.age} years young <br/>
        <strong>Sex: </strong>${dog.sex} <br/>
-       <button id="new-btn" style="background-color:goldenrod">Add Event</button>
+       <button class="new-btn" style="background-color:goldenrod">Add Event</button>
       <div class="additional-info" style="display:none">     
        <strong>Description: </strong>${dog.description}<br/>
        <strong>Status: </strong>${dog.status}<br/>
@@ -122,17 +122,17 @@ function renderDogToPage() {
 
 
 
-  ).join("")
-  let newBtns = document.querySelectorAll("#new-btn")
-  newBtns.forEach(newBtn => newBtn.addEventListener("click", renderEventForm))
-  let buttonRecordViews = document.querySelectorAll(".view-events-dog-button")
-  buttonRecordViews.forEach(buttonRecordView => buttonRecordView.addEventListener("click", showRecord))
-  let buttonDeletes = document.querySelectorAll(".delete-dog-button")
-  buttonDeletes.forEach(buttonDelete => buttonDelete.addEventListener("click", removeDogs))      
+            ).join("")
+            let newBtns = document.querySelectorAll(".new-btn")
+            newBtns.forEach(newBtn => newBtn.addEventListener("click", renderEventForm))
+            let buttonRecordViews = document.querySelectorAll(".view-events-dog-button")
+            buttonRecordViews.forEach(buttonRecordView => buttonRecordView.addEventListener("click", showRecord))
+            let buttonDeletes = document.querySelectorAll(".delete-dog-button")
+            buttonDeletes.forEach(buttonDelete => buttonDelete.addEventListener("click", removeDogs))
 
         })
 
-       
+
 }
 
 function renderEventForm() {
@@ -140,7 +140,7 @@ function renderEventForm() {
 
     let forms = document.getElementById("dog-form")
     let dogId = event.target.parentElement.dataset.dogId
-    console.log("please show me this",dogId)
+    console.log("please show me this", dogId)
     let html = `<form id="${dogId}">
     <fieldset>
      <legend>Title </legend>
@@ -153,7 +153,7 @@ function renderEventForm() {
      </fieldset>
    </form>`
     forms.innerHTML = html
-    document.querySelector("form").addEventListener("submit", createEvent)
+    forms.addEventListener("submit", createEvent)
 
     clearValue()
 }
@@ -180,13 +180,13 @@ function createEvent(event) {
             "Content-Type": "application/json", "Accept": "application/json"
         }
     }).then(response => response.json())
-        .then(events => {
-            showRecord(events)
+        .then(eventObject => {
+            showRecord(eventObject)
 
 
-            
+
         })
-        renderDogToPage()
+    renderDogToPage()
 }
 
 function clearValue() {
@@ -196,18 +196,18 @@ function clearValue() {
 
 }
 
-function showRecord() {
-    
+function showRecord(eventObject) {
+
     // clearList()
-    let dogList = document.querySelector("#dogs-list")
-    let id = event.target.parentElement.dataset.dogId
-    
+
+    let id = eventObject.dog.id
+
     fetch(`http://localhost:3000/dogs/${id}`)
         .then(response => response.json())
         .then(dogsobj => {
             renderShow(dogsobj)
         })
-       
+
 }
 
 function renderShow(dogsobj) {
@@ -233,20 +233,18 @@ function renderShow(dogsobj) {
     </div>`
 
     ).join("")
-    
+
 
 }
 
 
 
-function removeDogs() {
-    ClearPage()
-    let dogsDivs = document.querySelectorAll("#dogs-list .card")
-     dogsDivs.forEach(dogDvis => {
+function removeDogs(event) {
 
-      dogId = dogDvis.dataset.dogId
-      
-      fetch(`http://localhost:3000/dogs/${dogId}`,{
+    ClearPage()
+    let dogId = event.target.parentElement.dataset.dogId
+   
+    fetch(`http://localhost:3000/dogs/${dogId}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -256,20 +254,20 @@ function removeDogs() {
         .then(response => response.json())
         .then(json => {
 
-         let selectedDog = document.querySelector(`.card[data-dog-id="${dogId}"]`)
-         selectedDog.remove()
-            
+            let selectedDog = document.querySelector(`.card[data-dog-id="${dogId}"]`)
+            selectedDog.remove()
+            renderDogToPage()
         })
 
 
 
-     })
-
-    
-
-     
-
 }
+
+
+
+
+
+
 
 
 

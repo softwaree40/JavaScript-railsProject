@@ -29,7 +29,7 @@ class DogsController < ApplicationController
 
     def destroy
         @dog = Dog.find_by(id: params[:id])
-        @dog.delete
+        @dog.destroy
         render json: @dog
     end
 
