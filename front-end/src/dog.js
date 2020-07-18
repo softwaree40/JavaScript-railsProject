@@ -11,7 +11,7 @@ function addEventBinder() {
     let showDogBtn = document.getElementById("show-btn")
     button.addEventListener("click", renderForm)
     showDogBtn.addEventListener("click", renderDogToPage)
-
+    
 
 
 
@@ -129,7 +129,8 @@ function renderDogToPage() {
             buttonRecordViews.forEach(buttonRecordView => buttonRecordView.addEventListener("click", showRecord))
             let buttonDeletes = document.querySelectorAll(".delete-dog-button")
             buttonDeletes.forEach(buttonDelete => buttonDelete.addEventListener("click", removeDogs))
-
+            let edits = document.querySelectorAll(".edit-dog-button")
+            edits.forEach(edit => edit.addEventListener("click", editDogs))
         })
 
 
@@ -197,10 +198,10 @@ function clearValue() {
 }
 
 function showRecord(eventObject) {
-
-    // clearList()
-
-    let id = eventObject.dog.id
+      console.log(eventObject)
+    clearList()
+    
+    let id = eventObject.target ? eventObject.target.parentElement.dataset.dogId : eventObject.dog_id 
 
     fetch(`http://localhost:3000/dogs/${id}`)
         .then(response => response.json())
@@ -263,8 +264,51 @@ function removeDogs(event) {
 
 }
 
+function editDogs(formData) {
+
+    dogData = {
+     name: name
+     
+
+    }
+
+    ClearPage()
+    let dogId = event.target.parentElement.dataset.dogId
+   
+    fetch(`http://localhost:3000/dogs/${dogId}`, {
+        method: "PATCH",
+        body: JSON.stringify(dogData),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+    })
+        .then(response => response.json())
+        .then(json => {
+          
+           
+        })
 
 
+
+}
+ 
+// `<form>
+//     <fieldset>
+//      <legend>Name </legend>
+//      <input type="text" id="name" value="${dog.name}"/>
+//      <input type="hidden" id="dogId">
+//      <legend>Age </legend>
+//      <input type="text" id="age"/>
+//      <legend>Sex </legend>
+//      <input type="text" id="sex"/>
+//      <legend>Description</legend>
+//      <input type="text" id="description"/>
+//      <legend>Status </legend>
+//      <input type="text" id="status"/><br>
+//      <input type="submit" id="dog-submit" style="background-color:blueviolet" value="Add Dogs"/>
+//      </fieldset>
+//    </form>`
 
 
 
