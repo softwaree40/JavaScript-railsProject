@@ -12,6 +12,7 @@ class EventsController < ApplicationController
     end 
 
     def create
+        binding.pry
         @event = Event.create(event_params)
         render json: @event, status: 200
     end
