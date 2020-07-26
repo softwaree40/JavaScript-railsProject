@@ -1,12 +1,4 @@
-class Event{
-  
- constructor(title,description){
-  
-  this.title = title
-  this.description = description
-
- }
-  static renderEventForm() {
+function renderEventForm() {
     
     let dogId = event.target.parentElement.dataset.dogId
     let eventForms = document.getElementById("event-form")
@@ -21,13 +13,12 @@ class Event{
     </form>
     `
     eventForms.innerHTML = html
-    document.querySelector("form").addEventListener("submit", Event.createEvent)
+    document.querySelector("form").addEventListener("submit", createEvent)
    
     clearList()
 }
 
-  static createEvent(event){
-
+function createEvent(event) {
     event.preventDefault()
     let formEvent = {
 
@@ -37,7 +28,7 @@ class Event{
 
     }
 
-    
+    clearEventValue()
 
     fetch("http://localhost:3000/events", {
         method: "POST",
@@ -52,11 +43,19 @@ class Event{
             
         })
         clearList()
-        Event.clearEventValue()
        
-  }
+}
 
-  static renderEvent(id){
+function clearEventValue() {
+    title = document.getElementById("title").value=""
+    description = document.getElementById("event-description").value=""
+
+
+}
+
+
+function renderEvent(id){
+    
     fetch(`http://localhost:3000/events/${id}`)
     .then(response =>response.json())
     .then(eventData =>{
@@ -77,52 +76,7 @@ class Event{
     })
     
     
-  }
-
-  static clearEventValue() {
-    title = document.getElementById("title").value=""
-    description = document.getElementById("event-description").value=""
-}
-}
-let event = new Event(title,description)
-
-
-
-
-
-
-// function clearEventValue() {
-//     title = document.getElementById("title").value=""
-//     description = document.getElementById("event-description").value=""
-
-
-// }
-
-
-// function renderEvent(id){
-    
-//     // fetch(`http://localhost:3000/events/${id}`)
-//     // .then(response =>response.json())
-//     // .then(eventData =>{
-//     //     let eventList = document.querySelector("#event-form")
-//     //     eventList.innerHTML="" 
-//     //     let dogList = document.querySelector("#dogs-list")
-    
-//     //     dogList.innerHTML+= `<div class="card">
-//     //         </div>
-//     //         <div>
-//     //           <strong>Title: </strong>${eventData.title}<br/>
-//     //           <strong>Description: </strong>${eventData.description}<br/>
-//     //         </div>
-//     //         </div>`
-
-
-
-//     // })
-    
-    
 
 
  
-// }
-
+}

@@ -1,9 +1,8 @@
 
-document.addEventListener("DOMContentLoaded", () => {
-    renderDogToPage()
 
-})
+renderDogToPage()
 addEventBinder()
+
 function addEventBinder() {
     let formDiv = document.getElementById("dog-form")
     formDiv.innerHTML = ""
@@ -12,9 +11,6 @@ function addEventBinder() {
     button.addEventListener("click", renderForm)
     showDogBtn.addEventListener("click", renderDogToPage)
     
-
-
-
 }
 //Creating form 
 function renderForm() {
@@ -42,36 +38,33 @@ function renderForm() {
 
 }
 
-function ClearPage() {
+function clearPage() {
     let dogForm = document.querySelector("#dog-form")
     dogForm.innerHTML = ""
 
 }
 
-
-function createDogs(event) {
-    console.log("what good")
-
-
-    let name = document.getElementById("name").value
-    let age = document.getElementById("age").value
-    let sex = document.getElementById("sex").value
-    let description = document.getElementById("description").value
-    let status = document.getElementById("status").value
-
-    let formDate = {
-        name: name,
-        age: age,
-        sex: sex,
-        description: description,
-        status: status
-
-    }
+function clearDogValue(){
     name = document.getElementById("name").value = ""
     age = document.getElementById("age").value = ""
     sex = document.getElementById("sex").value = ""
     description = document.getElementById("description").value = ""
     status = document.getElementById("status").value = ""
+
+
+}
+
+function createDogs(event) {
+    event.preventDefault()
+    let formDate = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        sex: document.getElementById("sex").value,
+        description: document.getElementById("description").value,
+        status: document.getElementById("status").value
+
+    }
+     clearDogValue()
 
     fetch("http://localhost:3000/dogs", {
         method: "POST",
@@ -79,13 +72,14 @@ function createDogs(event) {
         headers: {
             "Content-Type": "application/json", "Accept": "application/json"
         }
-    }).then(response => response.json())
-        .then(dogs => renderDogToPage(dogs))
-    // renderDogToPage()
-    renderDogToPage()
+    })
+    .then(response => response.json())
+    .then(dogs => {
+           
+        renderDogToPage(dogs)})
+    
     clearList()
-    event.preventDefault()
-}
+}   
 
 function clearList() {
     let dogList = document.querySelector("#dogs-list")
@@ -97,7 +91,8 @@ function clearList() {
 
 function renderDogToPage() {
 
-    ClearPage()
+    clearList()
+    clearPage()
 
     let dogList = document.querySelector("#dogs-list")
     fetch("http://localhost:3000/dogs")
@@ -106,7 +101,6 @@ function renderDogToPage() {
 
             dogList.innerHTML = dogs.map(dog => `<div class="card" data-dog-id="${dog.id}">
       <button class="view-events-dog-button" style="background-color:blue">View Record</button>  
-      <button class="edit-dog-button" style="background-color:orange">Edit Info</button>  
       <button class="delete-dog-button" style="background-color:red">Delete Dog</button>
       </br></br>
       <strong class="dog-name">${dog.name}</strong> <br/>
@@ -123,126 +117,26 @@ function renderDogToPage() {
 
 
             ).join("")
-            let newBtns = document.querySelectorAll(".new-btn")
-            newBtns.forEach(newBtn => newBtn.addEventListener("click", renderEventForm))
-            let buttonRecordViews = document.querySelectorAll(".view-events-dog-button")
-            buttonRecordViews.forEach(buttonRecordView => buttonRecordView.addEventListener("click", showRecord))
-            let buttonDeletes = document.querySelectorAll(".delete-dog-button")
-            buttonDeletes.forEach(buttonDelete => buttonDelete.addEventListener("click", removeDogs))
-            let edits = document.querySelectorAll(".edit-dog-button")
-            edits.forEach(edit => edit.addEventListener("click", editDogs))
+            attachClickButton()
+            
         })
 
-
+        
 }
 
-function renderEventForm() {
-    clearList()
-
-    let forms = document.getElementById("dog-form")
-    let dogId = event.target.parentElement.dataset.dogId
-    console.log("please show me this", dogId)
-    let html = `<form id="${dogId}">
-    <fieldset>
-     <legend>Title </legend>
-     <input type="hidden">
-     <input type="text" id="title"/>
-     <legend>Description </legend>
-     <textarea id="description" name="description" rows="10" cols="50">
-     </textarea><br>
-     <input type="submit" id="dog-submit" style="background-color:goldenrod" value="Submit Event"/>
-     </fieldset>
-   </form>`
-    forms.innerHTML = html
-    forms.addEventListener("submit", createEvent)
-
-    clearValue()
+function attachClickButton(){
+    let newBtns = document.querySelectorAll(".new-btn")
+    newBtns.forEach(newBtn => newBtn.addEventListener("click", Event.renderEventForm))
+    let buttonRecordViews = document.querySelectorAll(".view-events-dog-button")
+    buttonRecordViews.forEach(buttonRecordView => buttonRecordView.addEventListener("click", showRecord))
+    let buttonDeletes = document.querySelectorAll(".delete-dog-button")
+    buttonDeletes.forEach(buttonDelete => buttonDelete.addEventListener("click", removeDogs))
+   
 }
-
-function createEvent(event) {
-    event.preventDefault()
-    let title = document.getElementById("title").value
-    let description = document.getElementById("description").value
-    let dog_id = event.target.id
-
-    let formEvent = {
-        dog_id: dog_id,
-        title: title,
-        description: description
-
-
-    }
-
-
-    fetch("http://localhost:3000/events", {
-        method: "POST",
-        body: JSON.stringify(formEvent),
-        headers: {
-            "Content-Type": "application/json", "Accept": "application/json"
-        }
-    }).then(response => response.json())
-        .then(eventObject => {
-            showRecord(eventObject)
-
-
-
-        })
-    renderDogToPage()
-}
-
-function clearValue() {
-    title = document.getElementById("title").value = ""
-    description = document.getElementById("description").value = ""
-
-
-}
-
-function showRecord(eventObject) {
-      console.log(eventObject)
-    clearList()
-    
-    let id = eventObject.target ? eventObject.target.parentElement.dataset.dogId : eventObject.dog_id 
-
-    fetch(`http://localhost:3000/dogs/${id}`)
-        .then(response => response.json())
-        .then(dogsobj => {
-            renderShow(dogsobj)
-        })
-
-}
-
-function renderShow(dogsobj) {
-
-    let dogList = document.querySelector("#dogs-list")
-
-    dogList.innerHTML = dogsobj.events.map(dog => `<div class="card" data-dog-id="${dog.id}">
-    
-    </br></br>
-    <strong class="dog-name">${dogsobj.name}</strong> <br/>
-      <strong>Age: </strong>${dogsobj.age} years young <br/>
-     <strong>Sex: </strong>${dogsobj.sex} <br/>
-    <div class="additional-info">     
-     <strong>Description: </strong>${dogsobj.description}<br/>
-     <strong>Status: </strong>${dogsobj.status}<br/>
-    
-    </div>
-    <div>
-      <strong>Title: </strong>${dogsobj.events[0].title}<br/>
-      <strong>Description: </strong>${dogsobj.events[0].description}<br/>
-
-    </div>
-    </div>`
-
-    ).join("")
-
-
-}
-
-
 
 function removeDogs(event) {
 
-    ClearPage()
+    clearPage()
     let dogId = event.target.parentElement.dataset.dogId
    
     fetch(`http://localhost:3000/dogs/${dogId}`, {
@@ -264,60 +158,48 @@ function removeDogs(event) {
 
 }
 
-function editDogs(formData) {
-
-    dogData = {
-     name: name
+function showRecord() {
      
+    clearList()
+    
+    // let id = eventObject.target ? eventObject.target.parentElement.dataset.dogId : eventObject.dog_id 
+    let id = event.target.parentElement.dataset.dogId
 
-    }
-
-    ClearPage()
-    let dogId = event.target.parentElement.dataset.dogId
-   
-    fetch(`http://localhost:3000/dogs/${dogId}`, {
-        method: "PATCH",
-        body: JSON.stringify(dogData),
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    })
+    fetch(`http://localhost:3000/dogs/${id}`)
         .then(response => response.json())
-        .then(json => {
-          
-           
-        })
+        .then(dog => {
+            let eventList= dog.events.map(dogEvent => `<div class="card">
+            </div>
+            <div>
+              <strong>Title: </strong>${dogEvent.title}<br/>
+              <strong>Description: </strong>${dogEvent.description}<br/>
+            </div>
+            </div>`).join("")
+           let dogList = document.querySelector("#dogs-list")
 
-
-
+                dogList.innerHTML+=`<div class="card" data-dog-id="${dog.id}">
+                
+                </br></br>
+                <strong class="dog-name">${dog.name}</strong> <br/>
+                  <strong>Age: </strong>${dog.age} years young <br/>
+                 <strong>Sex: </strong>${dog.sex} <br/> 
+                 <strong>Description: </strong>${dog.description}<br/>
+                 <strong>Status: </strong>${dog.status}<br/>
+                 ${eventList}
+                </div>`
+            
+             })
+             
+        
 }
- 
-// `<form>
-//     <fieldset>
-//      <legend>Name </legend>
-//      <input type="text" id="name" value="${dog.name}"/>
-//      <input type="hidden" id="dogId">
-//      <legend>Age </legend>
-//      <input type="text" id="age"/>
-//      <legend>Sex </legend>
-//      <input type="text" id="sex"/>
-//      <legend>Description</legend>
-//      <input type="text" id="description"/>
-//      <legend>Status </legend>
-//      <input type="text" id="status"/><br>
-//      <input type="submit" id="dog-submit" style="background-color:blueviolet" value="Add Dogs"/>
-//      </fieldset>
-//    </form>`
+// class Dog{
+//  constructor(data){
 
+//   this.name = data.name
+//   this.age = data.age 
+//   this.sex = data.sex 
+//   this.description = data.description
+//   this.status = data.status
+//  }
 
-
-
-
-
-
-
-
-
-
-
+// }
