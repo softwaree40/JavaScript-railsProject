@@ -43,7 +43,7 @@ function createEvent(event) {
     }).then(response => response.json())
         .then(eventObject => {
             new Event(eventObject)
-            
+
 
         })
 
@@ -64,19 +64,19 @@ function clearEventValue() {
 }
 
 
-class Event{
+class Event {
 
- constructor(event){
+    constructor(event) {
 
-  this.id = event.id
-  this.title = event.title
-  this.description = event.description
-  
+        this.id = event.id
+        this.title = event.title
+        this.description = event.description
 
- }
- 
- returnEvent(){
-  return `<div class="card">
+
+    }
+
+    returnEvent() {
+        return `<div class="card">
             </div>
             <div>
               <strong>Title: </strong>${this.title}<br/>
@@ -85,6 +85,6 @@ class Event{
             </div>`
 
 
- }
+    }
 
 }
