@@ -7,13 +7,9 @@ function addEventBinder() {
     let formDiv = document.getElementById("dog-form")
     formDiv.innerHTML = ""
     let button = document.getElementById("crete-btn")
-    button.addEventListener("click", renderForm)
     let showDogBtn = document.getElementById("show-btn")
-    showDogBtn.addEventListener("click", () =>{
-        clearEventForm()
-       renderDogToPage() 
-
-})
+    button.addEventListener("click", renderForm)
+    showDogBtn.addEventListener("click", renderDogToPage)
     
 }
 //Creating form 
@@ -103,12 +99,25 @@ function renderDogToPage() {
     fetch("http://localhost:3000/dogs")
         .then(resp => resp.json())
         .then(dogs => {
-            dogs.forEach(dog =>{
-              let dg = new Dog(dog)
-              dogList.innerHTML += dg.returnDogForm()
-            })
+
+            dogList.innerHTML = dogs.map(dog => `<div class="card" data-dog-id="${dog.id}">
+      <button class="view-events-dog-button" style="background-color:blue">View Record</button>  
+      <button class="delete-dog-button" style="background-color:red">Delete Dog</button>
+      </br></br>
+      <strong class="dog-name">${dog.name}</strong> <br/>
+        <strong>Age: </strong>${dog.age} years young <br/>
+       <strong>Sex: </strong>${dog.sex} <br/>
+       <button class="new-btn" style="background-color:goldenrod">Add Event</button>
+      <div class="additional-info" style="display:none">     
+       <strong>Description: </strong>${dog.description}<br/>
+       <strong>Status: </strong>${dog.status}<br/>
+    
+    </div>
+  </div>`
 
 
+
+            ).join("")
             attachClickButton()
             
         })
@@ -167,9 +176,8 @@ function showRecord() {
               <strong>Description: </strong>${dogEvent.description}<br/>
             </div>
             </div>`).join("")
-       
            let dogList = document.querySelector("#dogs-list")
-                
+
                 dogList.innerHTML+=`<div class="card" data-dog-id="${dog.id}">
                 
                 </br></br>
@@ -185,32 +193,14 @@ function showRecord() {
              
         
 }
-class Dog{
- constructor(data){
-  this.id = data.id
-  this.name = data.name
-  this.age = data.age 
-  this.sex = data.sex 
-  this.description = data.description
-  this.status = data.status
- }
-  returnDogForm(){
-   return `<div class="card" data-dog-id="${this.id}">
-   <button class="view-events-dog-button" style="background-color:blue">View Record</button>  
-   <button class="delete-dog-button" style="background-color:red">Delete Dog</button>
-   </br></br>
-   <strong class="dog-name">${this.name}</strong> <br/>
-     <strong>Age: </strong>${this.age} years young <br/>
-    <strong>Sex: </strong>${this.sex} <br/>
-    <button class="new-btn" style="background-color:goldenrod">Add Event</button>
-   <div class="additional-info" style="display:none">     
-    <strong>Description: </strong>${this.description}<br/>
-    <strong>Status: </strong>${this.status}<br/>
- 
- </div>
-</div>`
+// class Dog{
+//  constructor(data){
 
+//   this.name = data.name
+//   this.age = data.age 
+//   this.sex = data.sex 
+//   this.description = data.description
+//   this.status = data.status
+//  }
 
-  }
-
-}
+// }

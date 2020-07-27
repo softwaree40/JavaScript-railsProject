@@ -1,16 +1,8 @@
-class Event{
-  
- constructor(title,description){
-  
-  this.title = title
-  this.description = description
-
- }
-  static renderEventForm() {
-    
+function renderEventForm() {
+    clearList()
     let dogId = event.target.parentElement.dataset.dogId
     let eventForms = document.getElementById("event-form")
-    
+
     let html = `<form>
      <label><strong>Title: </strong></label><br/>
     <input type="text" id="title"><br/>
@@ -21,14 +13,17 @@ class Event{
     </form>
     `
     eventForms.innerHTML = html
-    document.querySelector("form").addEventListener("submit", Event.createEvent)
-   
-    clearList()
+    document.querySelector("form").addEventListener("submit", createEvent)
+
+
 }
 
-  static createEvent(event){
-
+function createEvent(event) {
     event.preventDefault()
+
+    renderDogToPage()
+
+
     let formEvent = {
 
         title: document.getElementById("title").value,
@@ -36,8 +31,8 @@ class Event{
         dog_id: document.getElementById("event-dogId").value
 
     }
-
-    
+    // let event = new Event(title,description)
+    clearEventValue()
 
     fetch("http://localhost:3000/events", {
         method: "POST",
@@ -47,82 +42,49 @@ class Event{
         }
     }).then(response => response.json())
         .then(eventObject => {
+            new Event(eventObject)
             
-           renderEvent(eventObject.id)
-            
-        })
-        clearList()
-        Event.clearEventValue()
-       
-  }
 
-  static renderEvent(id){
-    fetch(`http://localhost:3000/events/${id}`)
-    .then(response =>response.json())
-    .then(eventData =>{
-        let eventList = document.querySelector("#event-form")
-        eventList.innerHTML="" 
-        let dogList = document.querySelector("#dogs-list")
-    
-        dogList.innerHTML+= `<div class="card">
+        })
+
+    clearEventForm()
+}
+
+function clearEventForm() {
+
+    eventForms = document.getElementById("event-form")
+    eventForms.innerHTML = ""
+}
+
+function clearEventValue() {
+    title = document.getElementById("title").value = ""
+    description = document.getElementById("event-description").value = ""
+
+
+}
+
+
+class Event{
+
+ constructor(event){
+
+  this.id = event.id
+  this.title = event.title
+  this.description = event.description
+  
+
+ }
+ 
+ returnEvent(){
+  return `<div class="card">
             </div>
             <div>
-              <strong>Title: </strong>${eventData.title}<br/>
-              <strong>Description: </strong>${eventData.description}<br/>
+              <strong>Title: </strong>${this.title}<br/>
+              <strong>Description: </strong>${this.description}<br/>
             </div>
             </div>`
 
 
+ }
 
-    })
-    
-    
-  }
-
-  static clearEventValue() {
-    title = document.getElementById("title").value=""
-    description = document.getElementById("event-description").value=""
 }
-}
-let event = new Event(title,description)
-
-
-
-
-
-
-// function clearEventValue() {
-//     title = document.getElementById("title").value=""
-//     description = document.getElementById("event-description").value=""
-
-
-// }
-
-
-// function renderEvent(id){
-    
-//     // fetch(`http://localhost:3000/events/${id}`)
-//     // .then(response =>response.json())
-//     // .then(eventData =>{
-//     //     let eventList = document.querySelector("#event-form")
-//     //     eventList.innerHTML="" 
-//     //     let dogList = document.querySelector("#dogs-list")
-    
-//     //     dogList.innerHTML+= `<div class="card">
-//     //         </div>
-//     //         <div>
-//     //           <strong>Title: </strong>${eventData.title}<br/>
-//     //           <strong>Description: </strong>${eventData.description}<br/>
-//     //         </div>
-//     //         </div>`
-
-
-
-//     // })
-    
-    
-
-
- 
-// }
-

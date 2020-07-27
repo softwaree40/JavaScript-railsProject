@@ -1,8 +1,8 @@
 function renderEventForm() {
-    
+    clearList()
     let dogId = event.target.parentElement.dataset.dogId
     let eventForms = document.getElementById("event-form")
-    
+
     let html = `<form>
      <label><strong>Title: </strong></label><br/>
     <input type="text" id="title"><br/>
@@ -14,12 +14,16 @@ function renderEventForm() {
     `
     eventForms.innerHTML = html
     document.querySelector("form").addEventListener("submit", createEvent)
-   
-    clearList()
+
+
 }
 
 function createEvent(event) {
     event.preventDefault()
+
+    renderDogToPage()
+
+
     let formEvent = {
 
         title: document.getElementById("title").value,
@@ -27,7 +31,7 @@ function createEvent(event) {
         dog_id: document.getElementById("event-dogId").value
 
     }
-
+    // let event = new Event(title,description)
     clearEventValue()
 
     fetch("http://localhost:3000/events", {
@@ -38,45 +42,25 @@ function createEvent(event) {
         }
     }).then(response => response.json())
         .then(eventObject => {
-            
-           renderEvent(eventObject.id)
-            
+
+            renderEvent(eventObject.id)
+
         })
-        clearList()
-       
+
+    clearEventForm()
+}
+
+function clearEventForm() {
+
+    eventForms = document.getElementById("event-form")
+    eventForms.innerHTML = ""
 }
 
 function clearEventValue() {
-    title = document.getElementById("title").value=""
-    description = document.getElementById("event-description").value=""
+    title = document.getElementById("title").value = ""
+    description = document.getElementById("event-description").value = ""
 
 
 }
 
 
-function renderEvent(id){
-    
-    fetch(`http://localhost:3000/events/${id}`)
-    .then(response =>response.json())
-    .then(eventData =>{
-        let eventList = document.querySelector("#event-form")
-        eventList.innerHTML="" 
-        let dogList = document.querySelector("#dogs-list")
-    
-        dogList.innerHTML+= `<div class="card">
-            </div>
-            <div>
-              <strong>Title: </strong>${eventData.title}<br/>
-              <strong>Description: </strong>${eventData.description}<br/>
-            </div>
-            </div>`
-
-
-
-    })
-    
-    
-
-
- 
-}
